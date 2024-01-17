@@ -1,7 +1,13 @@
 #include <iostream>
+#include <memory>
+#include <thread>
+#include <chrono>
 
 // Boost libraries
 #include <boost/program_options.hpp>
+
+// Data providers
+#include <LocationDataProvider.h>
 
 using namespace std;
 using namespace boost::program_options;
@@ -28,7 +34,14 @@ int parse_config(int argc, char **argv) {
 
 int main(int argc, char **argv) {
     int ret = 0;
-    ret = parse_config(argc, argv);    
+    ret = parse_config(argc, argv);
+
+    shared_ptr<LocationDataProvider> locPtr(new LocationDataProvider);
+    locPtr->Start();
+
+    while(true) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    }
 
     return ret;
 }
