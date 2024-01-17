@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(openc2x C CXX)
+project(opencv2x C CXX)
 
 SET(PROJECT_VERSION_MAJOR "1")
 SET(PROJECT_VERSION_MINOR "5")
@@ -31,8 +31,8 @@ link_directories(
 add_subdirectory(common)
 add_subdirectory(data-provider)
 
-add_executable (openc2x ${MAIN_SRCS})
-target_link_libraries (openc2x PRIVATE
+add_executable (opencv2x ${MAIN_SRCS})
+target_link_libraries (opencv2x PRIVATE
     proto
     asn
     vdp
