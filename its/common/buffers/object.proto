@@ -1,0 +1,5 @@
+package StackPackage;
+
+message Object {
+	optional double obj = 1;
+}

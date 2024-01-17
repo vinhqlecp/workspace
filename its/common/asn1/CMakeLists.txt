@@ -198,5 +198,5 @@ set(asn1_support_SRCS
 	xer_support.c
 )
 
-add_library(asn SHARED ${asn1_SRCS} ${asn1_support_SRCS})
+add_library(asn STATIC ${asn1_SRCS} ${asn1_support_SRCS})
 target_include_directories(asn PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

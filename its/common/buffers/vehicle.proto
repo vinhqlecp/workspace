@@ -1,0 +1,5 @@
+package VehiclePackage;
+
+message Vehicle {
+	optional double obj = 1;
+}

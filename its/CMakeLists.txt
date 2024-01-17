@@ -17,6 +17,7 @@ find_package(Threads REQUIRED)
 include_directories(
     ${PROJECT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}/common/asn1/
+    ${CMAKE_CURRENT_BINARY_DIR}/common/buffers/
 )
 
 link_directories(
@@ -28,6 +29,7 @@ add_subdirectory(common)
 
 add_executable (openc2x ${MAIN_SRCS})
 target_link_libraries (openc2x PRIVATE
+    proto
     asn
     boost_program_options
 )
