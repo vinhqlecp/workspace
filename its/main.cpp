@@ -6,7 +6,7 @@
 // Boost libraries
 #include <boost/program_options.hpp>
 
-// Data providers
+#include <CaService.h>
 #include <VehicleDataProvider.h>
 
 using namespace std;
@@ -35,8 +35,12 @@ int parse_config(int argc, char **argv) {
 int main(int argc, char **argv) {
     int ret = 0;
 
-    shared_ptr<VehicleDataProvider> locPtr(new VehicleDataProvider);
-    locPtr->Start();
+    CaService* caPtr = new CaService;
+    caPtr->Start();
+
+    VehicleDataProvider* vehPtr = new VehicleDataProvider;
+    vehPtr->Start();
+    vehPtr->RegisterLocCallback(std::bind(&CaService::onLocationChanged, caPtr, std::placeholders::_1));
 
     while(true) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10000));

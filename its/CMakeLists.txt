@@ -21,6 +21,7 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/common/asn1/
     ${CMAKE_CURRENT_BINARY_DIR}/common/buffers/
     ${PROJECT_SOURCE_DIR}/data-provider/
+    ${PROJECT_SOURCE_DIR}/facilities/ca-service/
 )
 
 link_directories(
@@ -30,11 +31,13 @@ link_directories(
 
 add_subdirectory(common)
 add_subdirectory(data-provider)
+add_subdirectory(facilities)
 
 add_executable (opencv2x ${MAIN_SRCS})
 target_link_libraries (opencv2x PRIVATE
     proto
     asn
     vdp
+    ca-service
     boost_program_options
 )
