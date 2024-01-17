@@ -29,4 +29,5 @@ add_subdirectory(common)
 add_executable (openc2x ${MAIN_SRCS})
 target_link_libraries (openc2x PRIVATE
     asn
+    boost_program_options
 )
