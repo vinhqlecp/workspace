@@ -27,7 +27,7 @@ void CaService::onLocationChanged(const LocationPackage::GpsData& data) {
     printf("altitude  = %.7f\n", data.altitude());
     printf("speed     = %.3f\n", data.speed());
     printf("bearing   = %.3f\n", data.bearing());
-    printf("-------------------------------\n");
+    printf("-------------------------------\n\n");
 }
 
 void CaService::onVehicleChanged(const VehiclePackage::Vehicle& data) {
