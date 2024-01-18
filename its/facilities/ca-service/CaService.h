@@ -18,11 +18,12 @@ public:
     void Start();
     void OnLocationChanged(const LocationPackage::GpsData&);
     void OnVehicleChanged(const VehiclePackage::Vehicle&);
+    
+    void CheckSendCam();
 
 private:
     bool IsCamTrigger();
     void SingleShot(int delay);
-    void CheckSendCam();
 
     CAM_t CollectMandatoryData();
     bool IsOptionalContainers();
@@ -32,6 +33,7 @@ private:
     CAM_t mCurrentCam;
     CAM_t mLastCam;
 
+    uint16_t mGeneratedCamNum;
     uint16_t mTGenCam;
     uint16_t mNGenCam;
     uint16_t mTCheckGenCam;
@@ -41,7 +43,12 @@ private:
 
     bool mFastSending;
 
-    std::chrono::high_resolution_clock::time_point mStart;
+    std::chrono::high_resolution_clock::time_point mStartTime;
     std::chrono::high_resolution_clock::time_point mLastLowFreq;
     std::chrono::system_clock::duration mElapsed;
+
+    StationType_t mStationType;
+
+    bool mIsLocValid;
+    LocationPackage::GpsData mLastLocData;
 };
