@@ -1,6 +1,8 @@
 #pragma once
 
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 #include <gps.pb.h>
 #include <vehicle.pb.h>
@@ -14,8 +16,32 @@ public:
     virtual ~CaService();
 
     void Start();
-    void onLocationChanged(const LocationPackage::GpsData&);
-    void onVehicleChanged(const VehiclePackage::Vehicle&);
+    void OnLocationChanged(const LocationPackage::GpsData&);
+    void OnVehicleChanged(const VehiclePackage::Vehicle&);
 
 private:
+    bool IsCamTrigger();
+    void SingleShot(int delay);
+    void CheckSendCam();
+
+    CAM_t CollectMandatoryData();
+    bool IsOptionalContainers();
+    void CollectOptionalContainers(CAM_t *cam);
+
+private:
+    CAM_t mCurrentCam;
+    CAM_t mLastCam;
+
+    uint16_t mTGenCam;
+    uint16_t mNGenCam;
+    uint16_t mTCheckGenCam;
+    uint16_t mTGenCam_DCC;
+
+    ItsPduHeader_t mHeader;
+
+    bool mFastSending;
+
+    std::chrono::high_resolution_clock::time_point mStart;
+    std::chrono::high_resolution_clock::time_point mLastLowFreq;
+    std::chrono::system_clock::duration mElapsed;
 };

@@ -40,8 +40,8 @@ int main(int argc, char **argv) {
 
     VehicleDataProvider* vehPtr = new VehicleDataProvider;
     vehPtr->Start();
-    vehPtr->RegisterLocCallback(std::bind(&CaService::onLocationChanged, caPtr, std::placeholders::_1));
-    vehPtr->RegisterVehCallback(std::bind(&CaService::onVehicleChanged, caPtr, std::placeholders::_1));
+    vehPtr->RegisterLocCallback(std::bind(&CaService::OnLocationChanged, caPtr, std::placeholders::_1));
+    vehPtr->RegisterVehCallback(std::bind(&CaService::OnVehicleChanged, caPtr, std::placeholders::_1));
 
     while(true) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10000));
