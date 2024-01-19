@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <ecal/ecal.h>
 #include <ecal/msg/protobuf/publisher.h>
@@ -31,6 +32,6 @@ private:
     eCAL::protobuf::CSubscriber<LocationPackage::GpsData> *mLocSub;
     eCAL::protobuf::CSubscriber<VehiclePackage::Vehicle> *mVehSub;
 
-    CallbackLocFunction m_LocCallback;
-    CallbackVehFunction m_VehCallback;
+    std::vector<CallbackLocFunction> m_LocCallback;
+    std::vector<CallbackVehFunction> m_VehCallback;
 };

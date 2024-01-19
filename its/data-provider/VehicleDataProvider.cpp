@@ -51,7 +51,9 @@ void VehicleDataProvider::Start() {
 
 void VehicleDataProvider::RecvLocMsg(const char* name, const LocationPackage::GpsData& data) {
     printf("[%s] received location message\n", MODULE_NAME);
-    m_LocCallback(data);
+
+    for(uint16_t i = 0; i < m_LocCallback.size(); i++)
+        m_LocCallback[i](data);
 }
 
 void VehicleDataProvider::RecvVehMsg(const char* , const VehiclePackage::Vehicle&) {
@@ -60,10 +62,10 @@ void VehicleDataProvider::RecvVehMsg(const char* , const VehiclePackage::Vehicle
 
 void VehicleDataProvider::RegisterLocCallback(CallbackLocFunction cb) {
     printf("[%s] register location callback\n", MODULE_NAME);
-    m_LocCallback = cb;
+    m_LocCallback.push_back(cb);
 }
 
 void VehicleDataProvider::RegisterVehCallback(CallbackVehFunction cb) {
     printf("[%s] register vehicle callback\n", MODULE_NAME);
-    m_VehCallback = cb;
+    m_VehCallback.push_back(cb);
 }
