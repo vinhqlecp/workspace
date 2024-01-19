@@ -1,4 +1,6 @@
 #include <FacilityIF.h>
+#include <CaService.h>
+#include <CamTransmissionMgmt.h>
 
 #include <iostream>
 
@@ -33,8 +35,10 @@ void FacilityIF::Recv() {
     printf("[%s] receive data\n", MODULE_NAME);
 }
 
-void FacilityIF::OnLocationChanged(const LocationPackage::GpsData&) {
+void FacilityIF::OnLocationChanged(const LocationPackage::GpsData& data) {
     printf("[%s] Location data changed\n", MODULE_NAME);
+
+    mParent->GetCamTranMgmtIns()->ProcessRecvLocData(data);
 }
 
 void FacilityIF::OnVehicleChanged(const VehiclePackage::Vehicle&) {

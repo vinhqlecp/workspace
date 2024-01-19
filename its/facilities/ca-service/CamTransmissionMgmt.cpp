@@ -29,6 +29,6 @@ void CamTransmissionMgmt::SendCam() {
     printf("[%s] send CAM\n", MODULE_NAME);
 }
 
-void CamTransmissionMgmt::ProcessRecvLocData() {
+void CamTransmissionMgmt::ProcessRecvLocData(const LocationPackage::GpsData& data) {
     printf("[%s] process received location data\n", MODULE_NAME);
 }
