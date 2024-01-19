@@ -1,54 +1,36 @@
 #pragma once
 
-#include <iostream>
-#include <thread>
-#include <chrono>
+#include <unordered_map>
+#include <cstdint>
 
-#include <gps.pb.h>
-#include <vehicle.pb.h>
-
-#include <CAM.h>
-#include <VehicleDataProvider.h>
+class Interface;
+class CamEncodeDecode;
+class CamTransmissionMgmt;
+class CamReceptionMgmt;
 
 class CaService {
 public:
-    CaService();
+    static CaService* GetInstance();
     virtual ~CaService();
 
+    void Initialize();
     void Start();
-    void OnLocationChanged(const LocationPackage::GpsData&);
-    void OnVehicleChanged(const VehiclePackage::Vehicle&);
-    
-    void CheckSendCam();
+
+    // Getters
+    CamEncodeDecode* GetEnDecIns() { return mEnDec; }
+    Interface* GetInterfaceIns(uint16_t id) { return mIF[id]; }
+    CamTransmissionMgmt* GetCamTranMgmtIns() { return mTrans; }
+    CamReceptionMgmt* GetCamReptMgmtIns() { return mRecv; }
 
 private:
-    bool IsCamTrigger();
-    void SingleShot(int delay);
-
-    CAM_t CollectMandatoryData();
-    bool IsOptionalContainers();
-    void CollectOptionalContainers(CAM_t *cam);
+    CaService();
 
 private:
-    CAM_t mCurrentCam;
-    CAM_t mLastCam;
+    static CaService* mIns;
 
-    uint16_t mGeneratedCamNum;
-    uint16_t mTGenCam;
-    uint16_t mNGenCam;
-    uint16_t mTCheckGenCam;
-    uint16_t mTGenCam_DCC;
+    std::unordered_map<uint16_t, Interface*> mIF;
 
-    ItsPduHeader_t mHeader;
-
-    bool mFastSending;
-
-    std::chrono::high_resolution_clock::time_point mStartTime;
-    std::chrono::high_resolution_clock::time_point mLastLowFreq;
-    std::chrono::system_clock::duration mElapsed;
-
-    StationType_t mStationType;
-
-    bool mIsLocValid;
-    LocationPackage::GpsData mLastLocData;
+    CamEncodeDecode* mEnDec;
+    CamTransmissionMgmt* mTrans;
+    CamReceptionMgmt* mRecv;
 };

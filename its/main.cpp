@@ -6,8 +6,10 @@
 // Boost libraries
 #include <boost/program_options.hpp>
 
+#include <Constants.h>
 #include <CaService.h>
 #include <VehicleDataProvider.h>
+#include <FacilityIF.h>
 
 using namespace std;
 using namespace boost::program_options;
@@ -35,13 +37,17 @@ int parse_config(int argc, char **argv) {
 int main(int argc, char **argv) {
     int ret = 0;
 
-    CaService* caPtr = new CaService;
-    caPtr->Start();
+    CaService::GetInstance()->Initialize();
+    CaService::GetInstance()->Start();
+
+    FacilityIF* facIFPtr = static_cast<FacilityIF*>(CaService::GetInstance()->GetInterfaceIns(InterfaceId_Facility));
 
     VehicleDataProvider* vehPtr = new VehicleDataProvider;
     vehPtr->Start();
-    vehPtr->RegisterLocCallback(std::bind(&CaService::OnLocationChanged, caPtr, std::placeholders::_1));
-    vehPtr->RegisterVehCallback(std::bind(&CaService::OnVehicleChanged, caPtr, std::placeholders::_1));
+    if(facIFPtr != nullptr) {
+        vehPtr->RegisterLocCallback(std::bind(&FacilityIF::OnLocationChanged, facIFPtr, std::placeholders::_1));
+        vehPtr->RegisterVehCallback(std::bind(&FacilityIF::OnVehicleChanged, facIFPtr, std::placeholders::_1));
+    }
 
     while(true) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10000));
