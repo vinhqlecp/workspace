@@ -37,17 +37,11 @@ int parse_config(int argc, char **argv) {
 int main(int argc, char **argv) {
     int ret = 0;
 
-    CaService::GetInstance()->Initialize();
-    CaService::GetInstance()->Start();
-
-    FacilityIF* facIFPtr = static_cast<FacilityIF*>(CaService::GetInstance()->GetInterfaceIns(InterfaceId_Facility));
-
     VehicleDataProvider* vehPtr = new VehicleDataProvider;
     vehPtr->Start();
-    if(facIFPtr != nullptr) {
-        vehPtr->RegisterLocCallback(std::bind(&FacilityIF::OnLocationChanged, facIFPtr, std::placeholders::_1));
-        vehPtr->RegisterVehCallback(std::bind(&FacilityIF::OnVehicleChanged, facIFPtr, std::placeholders::_1));
-    }
+
+    CaService::GetInstance()->Initialize(vehPtr);
+    CaService::GetInstance()->Start();
 
     while(true) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10000));

@@ -7,13 +7,14 @@ class Interface;
 class CamEncodeDecode;
 class CamTransmissionMgmt;
 class CamReceptionMgmt;
+class VehicleDataProvider;
 
 class CaService {
 public:
     static CaService* GetInstance();
     virtual ~CaService();
 
-    void Initialize();
+    void Initialize(VehicleDataProvider* vdp);
     void Start();
 
     // Getters
@@ -33,4 +34,5 @@ private:
     CamEncodeDecode* mEnDec;
     CamTransmissionMgmt* mTrans;
     CamReceptionMgmt* mRecv;
+    VehicleDataProvider* mVdp;
 };

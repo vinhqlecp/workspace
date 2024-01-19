@@ -8,6 +8,7 @@
 #include <CamEncodeDecode.h>
 #include <CamTransmissionMgmt.h>
 #include <CamReceptionMgmt.h>
+#include <VehicleDataProvider.h>
 
 #include <iostream>
 
@@ -65,7 +66,7 @@ CaService::~CaService() {
     }
 }
 
-void CaService::Initialize() {
+void CaService::Initialize(VehicleDataProvider* vdp) {
     printf("[%s] initalize\n", MODULE_NAME);
 
     for(uint16_t i = InterfaceId_Application; i < InterfaceId_Max; i++) {
@@ -74,6 +75,13 @@ void CaService::Initialize() {
     mEnDec->Initialize(this);
     mTrans->Initialize(this);
     mRecv->Initialize(this);
+    
+    mVdp = vdp;
+    FacilityIF* facIfPtr = static_cast<FacilityIF*>(mIF[InterfaceId_Facility]);
+    if(mIF[InterfaceId_Facility] != nullptr) {
+        mVdp->RegisterLocCallback(std::bind(&FacilityIF::OnLocationChanged, facIfPtr, std::placeholders::_1));
+        mVdp->RegisterVehCallback(std::bind(&FacilityIF::OnVehicleChanged, facIfPtr, std::placeholders::_1));
+    }
 }
 
 void CaService::Start() {
