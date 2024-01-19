@@ -1,34 +1,34 @@
-#include <ApplicationIF.h>
+#include <CaSecurityIF.h>
 
 #include <iostream>
 
 #ifdef MODULE_NAME
 #undef MODULE_NAME
 #endif
-#define MODULE_NAME "ApplicationIF"
+#define MODULE_NAME "CaSecurityIF"
 
-ApplicationIF::ApplicationIF() {
+CaSecurityIF::CaSecurityIF() {
     printf("[%s] constructor\n", MODULE_NAME);
 }
 
-ApplicationIF::~ApplicationIF() {
+CaSecurityIF::~CaSecurityIF() {
     printf("[%s] destructor\n", MODULE_NAME);
 }
 
-void ApplicationIF::Initialize(CaService* parent) {
+void CaSecurityIF::Initialize(CaService* parent) {
     printf("[%s] initialize\n", MODULE_NAME);
 
     mParent = parent;
 }
 
-void ApplicationIF::Start() {
+void CaSecurityIF::Start() {
     printf("[%s] start\n", MODULE_NAME);
 }
 
-void ApplicationIF::Send() {
+void CaSecurityIF::Send() {
     printf("[%s] send data\n", MODULE_NAME);
 }
 
-void ApplicationIF::Recv() {
+void CaSecurityIF::Recv() {
     printf("[%s] receive data\n", MODULE_NAME);
 }

@@ -1,10 +1,10 @@
 #include <CaService.h>
 #include <Constants.h>
-#include <ApplicationIF.h>
-#include <FacilityIF.h>
-#include <ManagementIF.h>
-#include <NetworkTransportIF.h>
-#include <SecurityIF.h>
+#include <CaApplicationIF.h>
+#include <CaFacilityIF.h>
+#include <CaManagementIF.h>
+#include <CaNetworkTransportIF.h>
+#include <CaSecurityIF.h>
 #include <CamEncodeDecode.h>
 #include <CamTransmissionMgmt.h>
 #include <CamReceptionMgmt.h>
@@ -29,11 +29,11 @@ CaService* CaService::GetInstance() {
 CaService::CaService() {
     printf("[%s] constructor\n", MODULE_NAME);
 
-    mIF[InterfaceId_Application] = new ApplicationIF;
-    mIF[InterfaceId_Management] = new ManagementIF;
-    mIF[InterfaceId_NetworkTransport] = new NetworkTransportIF;
-    mIF[InterfaceId_Security] = new SecurityIF;
-    mIF[InterfaceId_Facility] = new FacilityIF;
+    mIF[InterfaceId_Application] = new CaApplicationIF;
+    mIF[InterfaceId_Management] = new CaManagementIF;
+    mIF[InterfaceId_NetworkTransport] = new CaNetworkTransportIF;
+    mIF[InterfaceId_Security] = new CaSecurityIF;
+    mIF[InterfaceId_Facility] = new CaFacilityIF;
 
     mEnDec = new CamEncodeDecode;
     mTrans = new CamTransmissionMgmt;
@@ -77,10 +77,10 @@ void CaService::Initialize(VehicleDataProvider* vdp) {
     mRecv->Initialize(this);
     
     mVdp = vdp;
-    FacilityIF* facIfPtr = static_cast<FacilityIF*>(mIF[InterfaceId_Facility]);
+    CaFacilityIF* facIfPtr = static_cast<CaFacilityIF*>(mIF[InterfaceId_Facility]);
     if(mIF[InterfaceId_Facility] != nullptr) {
-        mVdp->RegisterLocCallback(std::bind(&FacilityIF::OnLocationChanged, facIfPtr, std::placeholders::_1));
-        mVdp->RegisterVehCallback(std::bind(&FacilityIF::OnVehicleChanged, facIfPtr, std::placeholders::_1));
+        mVdp->RegisterLocCallback(std::bind(&CaFacilityIF::OnLocationChanged, facIfPtr, std::placeholders::_1));
+        mVdp->RegisterVehCallback(std::bind(&CaFacilityIF::OnVehicleChanged, facIfPtr, std::placeholders::_1));
     }
 }
 

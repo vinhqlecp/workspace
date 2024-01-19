@@ -1,34 +1,34 @@
-#include <NetworkTransportIF.h>
+#include <CaNetworkTransportIF.h>
 
 #include <iostream>
 
 #ifdef MODULE_NAME
 #undef MODULE_NAME
 #endif
-#define MODULE_NAME "NetworkTransportIF"
+#define MODULE_NAME "CaNetworkTransportIF"
 
-NetworkTransportIF::NetworkTransportIF() {
+CaNetworkTransportIF::CaNetworkTransportIF() {
     printf("[%s] constructor\n", MODULE_NAME);
 }
 
-NetworkTransportIF::~NetworkTransportIF() {
+CaNetworkTransportIF::~CaNetworkTransportIF() {
     printf("[%s] destructor\n", MODULE_NAME);
 }
 
-void NetworkTransportIF::Initialize(CaService* parent) {
+void CaNetworkTransportIF::Initialize(CaService* parent) {
     printf("[%s] initialize\n", MODULE_NAME);
 
     mParent = parent;
 }
 
-void NetworkTransportIF::Start() {
+void CaNetworkTransportIF::Start() {
     printf("[%s] start\n", MODULE_NAME);
 }
 
-void NetworkTransportIF::Send() {
+void CaNetworkTransportIF::Send() {
     printf("[%s] send data\n", MODULE_NAME);
 }
 
-void NetworkTransportIF::Recv() {
+void CaNetworkTransportIF::Recv() {
     printf("[%s] receive data\n", MODULE_NAME);
 }

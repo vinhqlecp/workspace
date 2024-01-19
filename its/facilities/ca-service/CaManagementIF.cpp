@@ -1,34 +1,34 @@
-#include <ManagementIF.h>
+#include <CaManagementIF.h>
 
 #include <iostream>
 
 #ifdef MODULE_NAME
 #undef MODULE_NAME
 #endif
-#define MODULE_NAME "ManagementIF"
+#define MODULE_NAME "CaManagementIF"
 
-ManagementIF::ManagementIF() {
+CaManagementIF::CaManagementIF() {
     printf("[%s] constructor\n", MODULE_NAME);
 }
 
-ManagementIF::~ManagementIF() {
+CaManagementIF::~CaManagementIF() {
     printf("[%s] destructor\n", MODULE_NAME);
 }
 
-void ManagementIF::Initialize(CaService* parent) {
+void CaManagementIF::Initialize(CaService* parent) {
     printf("[%s] initialize\n", MODULE_NAME);
 
     mParent = parent;
 }
 
-void ManagementIF::Start() {
+void CaManagementIF::Start() {
     printf("[%s] start\n", MODULE_NAME);
 }
 
-void ManagementIF::Send() {
+void CaManagementIF::Send() {
     printf("[%s] send data\n", MODULE_NAME);
 }
 
-void ManagementIF::Recv() {
+void CaManagementIF::Recv() {
     printf("[%s] receive data\n", MODULE_NAME);
 }

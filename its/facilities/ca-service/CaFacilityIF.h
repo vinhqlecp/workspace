@@ -5,10 +5,10 @@
 #include <gps.pb.h>
 #include <vehicle.pb.h>
 
-class FacilityIF : public Interface {
+class CaFacilityIF : public Interface {
 public:
-    FacilityIF();
-    virtual ~FacilityIF();
+    CaFacilityIF();
+    virtual ~CaFacilityIF();
 
     void Initialize(CaService*) override;
     void Start() override;

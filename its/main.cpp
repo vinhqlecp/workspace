@@ -9,7 +9,6 @@
 #include <Constants.h>
 #include <CaService.h>
 #include <VehicleDataProvider.h>
-#include <FacilityIF.h>
 
 using namespace std;
 using namespace boost::program_options;

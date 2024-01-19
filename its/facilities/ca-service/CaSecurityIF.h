@@ -2,10 +2,10 @@
 
 #include <Interface.h>
 
-class SecurityIF : public Interface {
+class CaSecurityIF : public Interface {
 public:
-    SecurityIF();
-    virtual ~SecurityIF();
+    CaSecurityIF();
+    virtual ~CaSecurityIF();
 
     void Initialize(CaService*) override;
     void Start() override;

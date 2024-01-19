@@ -2,10 +2,10 @@
 
 #include <Interface.h>
 
-class NetworkTransportIF : public Interface {
+class CaNetworkTransportIF : public Interface {
 public:
-    NetworkTransportIF();
-    virtual ~NetworkTransportIF();
+    CaNetworkTransportIF();
+    virtual ~CaNetworkTransportIF();
 
     void Initialize(CaService*) override;
     void Start() override;

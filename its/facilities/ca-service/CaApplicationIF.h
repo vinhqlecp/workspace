@@ -2,10 +2,10 @@
 
 #include <Interface.h>
 
-class ManagementIF : public Interface {
+class CaApplicationIF : public Interface {
 public:
-    ManagementIF();
-    virtual ~ManagementIF();
+    CaApplicationIF();
+    virtual ~CaApplicationIF();
 
     void Initialize(CaService*) override;
     void Start() override;
