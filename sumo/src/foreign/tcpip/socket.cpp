@@ -363,7 +363,7 @@ namespace tcpip
 			// Initialize address/port structure
 			memset(&remote_addr, 0, sizeof(remote_addr));
 			remote_addr.sin_family = AF_INET;
-			remote_addr.sin_port = htons(3000);
+			remote_addr.sin_port = htons(port_);
 			if (inet_pton(AF_INET, "127.0.0.1", &(remote_addr.sin_addr)) <= 0)
 				BailOnSocketError("udp::Socket::connect() Invalid address");
 		}
