@@ -1,4 +1,5 @@
 # root dir, mostly release / doc building stuff
+/build_win
 /sumo-*.tar.gz
 /sumo-*.zip
 /diff.*
