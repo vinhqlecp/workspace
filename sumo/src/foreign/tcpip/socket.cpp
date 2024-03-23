@@ -49,6 +49,7 @@
 #include <string>
 #include <algorithm>
 #include <string.h>
+#include <iomanip>
 
 
 #ifdef SHAWN
@@ -66,6 +67,9 @@ namespace tcpip
 	bool Socket::init_windows_sockets_ = true;
 	bool Socket::windows_sockets_initialized_ = false;
 	int Socket::instance_count_ = 0;
+
+	struct sockaddr_in local_addr;
+	struct sockaddr_in remote_addr;
 #endif
 
 	// ----------------------------------------------------------------------
@@ -268,16 +272,9 @@ namespace tcpip
 		if( socket_ >= 0 )
 			return nullptr;
 
-		struct sockaddr_in client_addr;
-#ifdef WIN32
-		int addrlen = sizeof(client_addr);
-#else
-		socklen_t addrlen = sizeof(client_addr);
-#endif
-
 		if(socket_ < 0 )
 		{
-			struct sockaddr_in self;
+			// struct sockaddr_in self;
 
 			//Create the UDP socket
 			socket_ = static_cast<int>(socket( AF_INET, SOCK_DGRAM, 0 ));
@@ -286,28 +283,27 @@ namespace tcpip
 			
 			//"Address already in use" error protection
 			{
-
-				#ifdef WIN32
-					//setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuseaddr, sizeof(reuseaddr));
-					// No address reuse in Windows!!!
-				#else
+				#ifndef WIN32
     				int reuseaddr = 1;
 					setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(reuseaddr));
 				#endif
 			}
 
 			// Initialize address/port structure
-			memset(&self, 0, sizeof(self));
-			self.sin_family = AF_INET;
-			self.sin_port = htons((unsigned short)port_);
-			self.sin_addr.s_addr = htonl(INADDR_ANY);
+			memset(&local_addr, 0, sizeof(local_addr));
+			local_addr.sin_family = AF_INET;
+			local_addr.sin_port = htons((unsigned short)port_);
+			if (inet_pton(AF_INET, "127.0.0.1", &(local_addr.sin_addr)) <= 0)
+				BailOnSocketError("udp::Socket::connect() Invalid address");
+
+			memset(&remote_addr, 0, sizeof(remote_addr));
 
 			// Assign a port number to the socket
-			if ( bind(socket_, (struct sockaddr*)&self, sizeof(self)) != 0 )
+			if ( bind(socket_, (struct sockaddr*)&local_addr, sizeof(struct sockaddr)) != 0 )
 				BailOnSocketError("udp::Socket::accept() Unable to create listening socket");
 
 			// Make the newly created socket blocking or not
-			set_blocking(blocking_);
+			//set_blocking(blocking_);
 		}
 
 		if( socket_ >= 0 )
@@ -354,22 +350,22 @@ namespace tcpip
 		Socket::
 		connect()
 	{
-		sockaddr_in address;
+		if (socket_ >= 0)
+			return;
 
-		if( !atoaddr( host_.c_str(), address) )
-			BailOnSocketError("udp::Socket::connect() @ Invalid network address");
-
-		socket_ = static_cast<int>(socket( PF_INET, SOCK_DGRAM, 0 ));
-		if( socket_ < 0 )
-			BailOnSocketError("udp::Socket::connect() @ socket");
-
-		if( ::connect( socket_, (sockaddr const*)&address, sizeof(address) ) < 0 )
-			BailOnSocketError("udp::Socket::connect() @ connect");
-
-		if( socket_ >= 0 )
+		if (socket_ < 0)
 		{
-			int x = 1;
-			setsockopt(socket_, IPPROTO_TCP, TCP_NODELAY, (const char*)&x, sizeof(x));
+			//Create the UDP socket
+			socket_ = static_cast<int>(socket(AF_INET, SOCK_DGRAM, 0));
+			if (socket_ < 0)
+				BailOnSocketError("udp::Socket::accept() @ socket");
+
+			// Initialize address/port structure
+			memset(&remote_addr, 0, sizeof(remote_addr));
+			remote_addr.sin_family = AF_INET;
+			remote_addr.sin_port = htons(3000);
+			if (inet_pton(AF_INET, "127.0.0.1", &(remote_addr.sin_addr)) <= 0)
+				BailOnSocketError("udp::Socket::connect() Invalid address");
 		}
     }
 
@@ -405,17 +401,32 @@ namespace tcpip
 		unsigned char const *bufPtr = &buffer[0];
 		while( numbytes > 0 )
 		{
-			struct sockaddr_in self {};
-			self.sin_family = AF_INET;
-			self.sin_port = htons(port_);
-			self.sin_addr.s_addr = htonl(INADDR_ANY);
 #ifdef WIN32
-			int bytesSent = sendto(socket_, (const char*)bufPtr, numbytes, 0, (struct sockaddr*)&self, sizeof(self));
+			int bytesSent = sendto(socket_, (const char*)bufPtr, numbytes, 0, (struct sockaddr*)&remote_addr, sizeof(remote_addr));
 #else
-			int bytesSent = ::send( socket_, bufPtr, numbytes, 0 );
+			int bytesSent = sendto(socket_, (const char*)bufPtr, numbytes, 0, (struct sockaddr*)&remote_addr, sizeof(remote_addr));
 #endif
 			if( bytesSent < 0 )
 				BailOnSocketError( "send failed" );
+			else {
+#ifdef LOG_DATA
+				if (((struct sockaddr*)&remote_addr)->sa_family == AF_INET) // IPv4
+				{
+					const sockaddr_in* clientIPv4 = reinterpret_cast<const sockaddr_in*>((struct sockaddr*)&remote_addr);
+					char ipAddr[INET_ADDRSTRLEN];
+					inet_ntop(AF_INET, &(clientIPv4->sin_addr), ipAddr, INET_ADDRSTRLEN);
+					std::cerr << "\nSent data to" << std::endl;
+					std::cerr << "    Remote IP (IPv4): " << ipAddr << std::endl;
+					std::cerr << "    Remote Port: " << ntohs(clientIPv4->sin_port) << std::endl;
+					std::cerr << "    Data: ";
+					for (size_t i = 0; i < numbytes; i++)
+					{
+						std::cerr << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(static_cast<unsigned char>(bufPtr[i])) << " ";
+					}
+					std::cerr << std::endl;
+				}
+#endif
+			}
 
 			numbytes -= bytesSent;
 			bufPtr += bytesSent;
@@ -439,6 +450,8 @@ namespace tcpip
 		// TCP/IP stack on their own which probably would cost more performance.
 		std::vector<unsigned char> msg;
 		msg.insert(msg.end(), length_storage.begin(), length_storage.end());
+		send(msg);
+		msg.clear();
 		msg.insert(msg.end(), b.begin(), b.end());
 		send(msg);
 	}
@@ -450,14 +463,32 @@ namespace tcpip
 		recvAndCheck(unsigned char * const buffer, std::size_t len)
 		const
 	{
-		struct sockaddr_in sender_addr;
 #ifdef WIN32
-		int sender_addr_len = sizeof(sender_addr);
-		const int bytesReceived = recvfrom(socket_, (char*)buffer, len, 0, (struct sockaddr*)&sender_addr, &sender_addr_len);
+		int remote_addr_len = sizeof(remote_addr);
+		const int bytesReceived = recvfrom(socket_, (char*)buffer, len, 0, (struct sockaddr*)&remote_addr, &remote_addr_len);
 #else
-		socklen_t sender_addr_len = sizeof(sender_addr);
-		const int bytesReceived = static_cast<int>(recvfrom(socket_, (char*)buffer, len, 0, (struct sockaddr*)&sender_addr, &sender_addr_len));
+		socklen_t remote_addr_len = sizeof(remote_addr);
+		const int bytesReceived = static_cast<int>(recvfrom(socket_, (char*)buffer, len, 0, (struct sockaddr*)&remote_addr, &remote_addr_len));
 #endif
+
+#ifdef LOG_DATA
+		if (((struct sockaddr*)&remote_addr)->sa_family == AF_INET) // IPv4
+		{
+			const sockaddr_in* clientIPv4 = reinterpret_cast<const sockaddr_in*>((struct sockaddr*)&remote_addr);
+			char ipAddr[INET_ADDRSTRLEN];
+			inet_ntop(AF_INET, &(clientIPv4->sin_addr), ipAddr, INET_ADDRSTRLEN);
+			std::cerr << "Received data from" << std::endl;
+			std::cerr << "    Remote IP (IPv4): " << ipAddr << std::endl;
+			std::cerr << "    Remote Port: " << ntohs(clientIPv4->sin_port) << std::endl;
+			std::cerr << "    Data: ";
+			for (size_t i = 0; i < len; i++)
+			{
+				std::cerr << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(static_cast<unsigned char>(buffer[i])) << " ";
+			}
+			std::cerr << std::endl;
+		}
+#endif
+
 		if( bytesReceived == 0 )
 			throw SocketException( "udp::Socket::recvAndCheck @ recv: peer shutdown" );
 		if (bytesReceived < 0)

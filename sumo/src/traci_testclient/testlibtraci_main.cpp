@@ -36,8 +36,8 @@ main(int argc, char** argv) {
         options.push_back(argv[i]);
     }
     try {
-        libtraci::Simulation::start(options);
-        // libtraci::Simulation::start(options, -1, libsumo::DEFAULT_NUM_RETRIES, "default", true);
+        //libtraci::Simulation::start(options);
+        libtraci::Simulation::init(3000);
         std::cout << "Simulation started\n";
         for (int i = 0; i < 50; i++) {
             libtraci::Simulation::step();
@@ -46,20 +46,6 @@ main(int argc, char** argv) {
     } catch (const std::runtime_error& e) {
         std::cerr << "Could not start simulation: " << e.what() << "\n";
     }
-    /*
-      std::vector<libsumo::TraCIStage> result = libsumo::Simulation::findIntermodalRoute("64455492", "-22913705", "public", 21600, 3, -1, -1, 0, 0,0,"ped");
-      double cost = 0;
-      double time = 0;
-      for (const auto& stage : result)
-      {
-            std::cout << " type=" << stage.type << " line=" << stage.line << " travelTime=" << stage.travelTime << " cost=" << stage.cost << " destination: "<< stage.destStop<<"\n";
-            std::cout << "Descr:\n" << stage.description<< std::endl<<std::endl;
-            cost += stage.cost;
-            time += stage.travelTime;
-      }
-        std::cout<<"end cost: "<<cost<<std::endl;
-      std::cout<<"end time: "<<time<<std::endl;
-    */
 }
 
 
