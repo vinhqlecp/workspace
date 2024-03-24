@@ -36,8 +36,8 @@ main(int argc, char** argv) {
         options.push_back(argv[i]);
     }
     try {
-        //libtraci::Simulation::start(options);
-        libtraci::Simulation::init(3000);
+        libtraci::Simulation::start(options);
+        // libtraci::Simulation::init(3000);
         std::cout << "Simulation started\n";
         for (int i = 0; i < 50; i++) {
             libtraci::Simulation::step();

@@ -65,6 +65,7 @@ Simulation::start(const std::vector<std::string>& cmd, int port, int numRetries,
     }
 #ifdef WIN32
     FILE* pipe = _popen(oss.str().c_str(), "r");
+    _sleep(1000);
 #else
     FILE* pipe = popen(oss.str().c_str(), "r");
 #endif
